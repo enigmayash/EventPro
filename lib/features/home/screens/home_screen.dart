@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import '../widgets/featured_events.dart';
 import 'package:event_pro/features/home/widgets/event_banner.dart';
-
+import 'package:event_pro/features/event/screens/create_event_screen.dart';
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('EventPro'),
+      ),
       body: SafeArea(
         child: Column(
           children: [
@@ -50,7 +53,19 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Navigate to create event screen when FAB is pressed
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CreateEventScreen(isPublic: true,),
+            ),
+          );
+        },
+        child: Icon(Icons.add),
+        tooltip: 'Create New Event',
+      ),
     );
   }
 }
-
