@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// import '../widgets/event_banner.dart';
 import '../widgets/featured_events.dart';
 import 'package:event_pro/features/home/widgets/event_banner.dart';
 

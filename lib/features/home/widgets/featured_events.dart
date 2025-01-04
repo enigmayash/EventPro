@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'dart:async
 import 'package:intl/intl.dart';
 import 'package:event_pro/core/model/event.dart';
 import 'package:event_pro/features/event/screens/event_detail_screen.dart';
+import 'package:event_pro/features/event/widgets/event_card.dart';
 
 class FeaturedEvents extends StatelessWidget {
   @override
@@ -34,15 +34,19 @@ class FeaturedEvents extends StatelessWidget {
           physics: NeverScrollableScrollPhysics(),
           itemCount: events.length,
           itemBuilder: (context, index) {
-            final event = Event.fromFirestore(events[index]);
+            final event = Event.fromFirestore(
+                events[index]); // Use fromFirestore to create Event object
             return EventCard(
               key: ValueKey(event.id),
-              event: event,
+              title: event.title,
+              date: DateFormat('MMMM dd, yyyy')
+                  .format(event.date), // Format date for display
+              bannerUrl: event.bannerUrl,
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => EventDetailsScreen(event: event),
+                    builder: (context) => EventDetailsScreen(eventId: events[index].id,)
                   ),
                 );
               },
@@ -50,111 +54,6 @@ class FeaturedEvents extends StatelessWidget {
           },
         );
       },
-    );
-  }
-}
-
-class EventCard extends StatelessWidget {
-  final Event event;
-  final VoidCallback onTap;
-
-  const EventCard({
-    Key? key,
-    required this.event,
-    required this.onTap,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Event Image
-            ClipRRect(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-              child: Image.network(
-                event.bannerUrl,
-                height: 200,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    height: 200,
-                    color: Colors.grey[300],
-                    child: Icon(Icons.error),
-                  );
-                },
-              ),
-            ),
-            // Event Details
-            Padding(
-              padding: EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    event.title,
-                    style: Theme.of(context).textTheme.titleLarge,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Icon(Icons.calendar_today, size: 16),
-                      SizedBox(width: 8),
-                      Text(
-                        DateFormat('EEE, MMM d, yyyy').format(event.date),
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(Icons.location_on, size: 16),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          event.location,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '₹${event.price.toStringAsFixed(2)}',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              color: Theme.of(context).primaryColor,
-                            ),
-                      ),
-                      TextButton(
-                        onPressed: onTap,
-                        child: Text('View Details'),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
